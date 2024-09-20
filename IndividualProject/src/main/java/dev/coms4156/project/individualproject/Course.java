@@ -49,7 +49,6 @@ public class Course implements Serializable {
       this.enrolledStudentCount--;
       return true;
     }
-
     return false;
   }
 
@@ -74,26 +73,29 @@ public class Course implements Serializable {
         + courseLocation +  "; Time: " + courseTimeSlot;
   }
 
-
   public void reassignInstructor(String newInstructorName) {
     this.instructorName = newInstructorName;
   }
-
 
   public void reassignLocation(String newLocation) {
     this.courseLocation = newLocation;
   }
 
-
   public void reassignTime(String newTime) {
     this.courseTimeSlot = newTime;
   }
-
-
+  
+  /**
+   * Sets the enrollment count. If  enrollment count exceeds enrollment capacity, 
+   * enrollment count is set to capacity.
+   */
   public void setEnrolledStudentCount(int count) {
-    this.enrolledStudentCount = count;
+    if (count > this.enrollmentCapacity) {
+      this.enrolledStudentCount = this.enrollmentCapacity;
+    } else {
+      this.enrolledStudentCount = count;
+    }
   }
-
 
   public boolean isCourseFull() {
     return this.enrolledStudentCount >= this.enrollmentCapacity;

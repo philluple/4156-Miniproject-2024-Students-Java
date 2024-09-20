@@ -37,21 +37,30 @@ public class RouteControllerUnitTests {
 
     String[] times = {"11:40-12:55", "4:10-5:25", "10:10-11:25", "2:40-3:55"};
     String[] locations = {"417 IAB", "309 HAV", "301 URIS"};
+    Map<String, Course> comsCourses = new HashMap<>();
 
     Course coms1004 = new Course("Adam Cannon", locations[0], times[0], 400);
     coms1004.setEnrolledStudentCount(249);
+    comsCourses.put("1004", coms1004);
+
     Course coms3134 = new Course("Brian Borowski", locations[2], times[1], 250);
     coms3134.setEnrolledStudentCount(242);
-    Map<String, Course> comsCourses = new HashMap<>();
-    comsCourses.put("1004", coms1004);
     comsCourses.put("3134", coms3134);
 
-    Course econ1105 = new Course("Waseem Noor", locations[1], times[3], 210);
-    econ1105.setEnrolledStudentCount(187);
+    Course coms3567 = new Course("Phillip Le", locations[2], times[1], 250);
+    coms3567.setEnrolledStudentCount(0);
+    comsCourses.put("3567", coms3567);
+
+    Course coms4995 = new Course("Phillip Le", locations[2], times[1], 250);
+    coms4995.setEnrolledStudentCount(249);
+    comsCourses.put("4995", coms4995);
+
+    Course econ1004 = new Course("Waseem Noor", locations[1], times[3], 210);
+    econ1004.setEnrolledStudentCount(187);
     Course econ2257 = new Course("Tamrat Gashaw", "428 PUP", times[2], 125);
     econ2257.setEnrolledStudentCount(63);
     Map<String, Course> econCourses = new HashMap<>();
-    econCourses.put("1105", econ1105);
+    econCourses.put("1004", econ1004);
     econCourses.put("2257", econ2257);
     
     Department econ = new Department("ECON", econCourses, "Michael Woodford", 2345);
@@ -70,6 +79,34 @@ public class RouteControllerUnitTests {
     IndividualProjectApplication.myFileDatabase = mockDatabase;
 
     routeController = new RouteController();
+  }
+  
+  @Test
+  public void isCourseFullTest() {
+    ResponseEntity<?> notFullResponse = routeController.isCourseFull("COMS", 4995);
+    assertEquals(HttpStatus.OK, notFullResponse.getStatusCode());
+    assertEquals("Course is not full.", notFullResponse.getBody());
+
+    ResponseEntity<?> goodResponse = routeController.enrollStudentInCourse("COMS", 4995);
+    assertEquals(HttpStatus.OK, goodResponse.getStatusCode());
+
+    ResponseEntity<?> fullResponse = routeController.isCourseFull("COMS", 4995);
+    assertEquals(HttpStatus.OK, fullResponse.getStatusCode());
+    assertEquals("Course is full.", fullResponse.getBody());
+  }
+
+  @Test
+  public void enrollStudentTest() {
+    String courseIsFull = "The following course is full:";
+    ResponseEntity<?> goodResponse = routeController.enrollStudentInCourse("COMS", 4995);
+    assertEquals(HttpStatus.OK, goodResponse.getStatusCode());
+
+    ResponseEntity<?> fullResponse = routeController.enrollStudentInCourse("COMS", 4995);
+    assertEquals(HttpStatus.OK, fullResponse.getStatusCode());
+
+    boolean isFull = fullResponse.getBody().toString().contains(courseIsFull);
+    System.out.println(fullResponse.getBody());    
+    assertEquals(true, isFull);
   }
 
   @Test
@@ -162,11 +199,15 @@ public class RouteControllerUnitTests {
 
   @Test
   public void testRetrieveCourses() {
-    ResponseEntity<?> removeResponse = routeController.retrieveCourses(1004);
-    assertEquals(HttpStatus.OK, removeResponse.getStatusCode());
+    String expectedValue = "No courses found";
+    ResponseEntity<?> response = routeController.retrieveCourses(1004);
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+    assertNotEquals(expectedValue, response.getBody());
+    
+    ResponseEntity<?> response2 = routeController.retrieveCourses(1234);
+    assertEquals(HttpStatus.NOT_FOUND, response2.getStatusCode());
+    assertEquals(expectedValue, response2.getBody());
   }
-
-
 
   @Test 
   public void testCourseTime() {
@@ -185,14 +226,21 @@ public class RouteControllerUnitTests {
 
     ResponseEntity<?> badResponse = routeController.dropStudent("COMS", 1111);
     assertEquals(HttpStatus.NOT_FOUND, badResponse.getStatusCode());
+
+    ResponseEntity<?> badResponse2 = routeController.dropStudent("COMS", 3567);
+    assertEquals(HttpStatus.BAD_REQUEST, badResponse2.getStatusCode());
   }
 
   @Test
   public void setEnrollmentCountTest() {
-    ResponseEntity<?> goodResponse = routeController.setEnrollmentCount("COMS", 1004, 1000);
-    assertEquals(HttpStatus.OK, goodResponse.getStatusCode());
+    // Bad request, too many students 
+    ResponseEntity<?> overResponse = routeController.setEnrollmentCount("COMS", 1004, 1000);
+    assertEquals(HttpStatus.BAD_REQUEST, overResponse.getStatusCode());
 
     ResponseEntity<?> badResponse = routeController.setEnrollmentCount("COMS", 1111, 1000);
     assertEquals(HttpStatus.NOT_FOUND, badResponse.getStatusCode());
+
+    ResponseEntity<?> goodResponse = routeController.setEnrollmentCount("COMS", 1004, 200);
+    assertEquals(HttpStatus.OK, goodResponse.getStatusCode());
   }
 }
