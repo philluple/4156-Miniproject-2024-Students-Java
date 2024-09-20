@@ -37,22 +37,23 @@ public class RouteControllerUnitTests {
 
     String[] times = {"11:40-12:55", "4:10-5:25", "10:10-11:25", "2:40-3:55"};
     String[] locations = {"417 IAB", "309 HAV", "301 URIS"};
+    Map<String, Course> comsCourses = new HashMap<>();
 
     Course coms1004 = new Course("Adam Cannon", locations[0], times[0], 400);
     coms1004.setEnrolledStudentCount(249);
+    comsCourses.put("1004", coms1004);
+
     Course coms3134 = new Course("Brian Borowski", locations[2], times[1], 250);
     coms3134.setEnrolledStudentCount(242);
+    comsCourses.put("3134", coms3134);
+
     Course coms3567 = new Course("Phillip Le", locations[2], times[1], 250);
-    coms3134.setEnrolledStudentCount(0);
+    coms3567.setEnrolledStudentCount(0);
+    comsCourses.put("3567", coms3567);
+
     Course coms4995 = new Course("Phillip Le", locations[2], times[1], 250);
     coms4995.setEnrolledStudentCount(249);
-
-    Map<String, Course> comsCourses = new HashMap<>();
-    comsCourses.put("1004", coms1004);
-    comsCourses.put("3134", coms3134);
-    comsCourses.put("3567", coms3567);
     comsCourses.put("4995", coms4995);
-
 
     Course econ1004 = new Course("Waseem Noor", locations[1], times[3], 210);
     econ1004.setEnrolledStudentCount(187);
@@ -82,19 +83,16 @@ public class RouteControllerUnitTests {
   
   @Test
   public void isCourseFullTest() {
-    String courseIsFull = "Course is full.";
-    String courseIsNotFull = "Course is not full.";
-    
     ResponseEntity<?> notFullResponse = routeController.isCourseFull("COMS", 4995);
     assertEquals(HttpStatus.OK, notFullResponse.getStatusCode());
-    assertEquals(courseIsNotFull, notFullResponse.getBody());
+    assertEquals("Course is not full.", notFullResponse.getBody());
 
     ResponseEntity<?> goodResponse = routeController.enrollStudentInCourse("COMS", 4995);
     assertEquals(HttpStatus.OK, goodResponse.getStatusCode());
 
     ResponseEntity<?> fullResponse = routeController.isCourseFull("COMS", 4995);
     assertEquals(HttpStatus.OK, fullResponse.getStatusCode());
-    assertEquals(courseIsFull, fullResponse.getBody());
+    assertEquals("Course is full.", fullResponse.getBody());
   }
 
   @Test

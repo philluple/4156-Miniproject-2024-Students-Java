@@ -138,7 +138,7 @@ public class RouteController {
           return new ResponseEntity<>("Course Not Found", HttpStatus.NOT_FOUND);
         }
         boolean full = requestedCourse.isCourseFull();
-        if (full){
+        if (full) {
           return new ResponseEntity<>("Course is full.", HttpStatus.OK);
         } else {
           return new ResponseEntity<>("Course is not full.", HttpStatus.OK);
@@ -609,8 +609,10 @@ public class RouteController {
           return new ResponseEntity<>("Course Not Found", HttpStatus.NOT_FOUND);
         }
 
-        if (requestedCourse.getEnrollmentCapacity() < count){
-          return new ResponseEntity<>("Attempting to exceed course capacity, could not complete request", HttpStatus.BAD_REQUEST);
+        if (requestedCourse.getEnrollmentCapacity() < count) {
+          return new ResponseEntity<>("Attempting to exceed course capacity," 
+              + "could not complete request", 
+              HttpStatus.BAD_REQUEST);
         }
 
         int oldEnrollment = requestedCourse.getEnrollmentCount();
