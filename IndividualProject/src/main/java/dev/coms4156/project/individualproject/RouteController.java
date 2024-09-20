@@ -137,7 +137,12 @@ public class RouteController {
         if (requestedCourse == null) {
           return new ResponseEntity<>("Course Not Found", HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(requestedCourse.isCourseFull(), HttpStatus.OK);
+        boolean full = requestedCourse.isCourseFull();
+        if (full){
+          return new ResponseEntity<>("Course is full.", HttpStatus.OK);
+        } else {
+          return new ResponseEntity<>("Course is not full.", HttpStatus.OK);
+        }
       } else {
         return new ResponseEntity<>("Course Not Found", HttpStatus.NOT_FOUND);
       }
@@ -366,28 +371,34 @@ public class RouteController {
         .myFileDatabase.getDepartmentMapping();
     
     StringBuilder result = new StringBuilder();
-    result.append("Course Code: ").append(courseCode).append("\n");
-    
+
     for (Map.Entry<String, Department> entry : departmentMapping.entrySet()) {
-      Boolean foundCourse = false;
+      boolean foundCourse = false;  // Use `boolean` instead of `Boolean`
       String deptCode = entry.getKey();
       Department value = entry.getValue();
       Map<String, Course> courseMapping = value.getCourseSelection();
+      
       for (Map.Entry<String, Course> course : courseMapping.entrySet()) {
         String courseName = course.getKey(); 
         if (courseName.equals(Integer.toString(courseCode))) {
-          if (foundCourse == false) {
+          if (!foundCourse) {
             foundCourse = true;
-            result.append("Department: ").append(deptCode);
+            result.append("\n").append(deptCode).append(" ")
+                .append(Integer.toString(courseCode)).append("\n");
           }
-          result.append(course.getValue().toString());
+          result.append(course.getValue().toString()).append("\n");
         }
-      }    
+      }
     }
-    if (result.isEmpty()) {
+
+    if (result.length() > 0 && result.charAt(result.length() - 1) == '\n') {
+      result.deleteCharAt(result.length() - 1);
+    }
+
+    if (result.length() == 0) {
       return new ResponseEntity<>("No courses found", HttpStatus.NOT_FOUND);
     }
-    return new ResponseEntity<>(result, HttpStatus.OK);
+    return new ResponseEntity<>(result.toString().trim(), HttpStatus.OK);
   }
 
   /**
@@ -404,7 +415,7 @@ public class RouteController {
    *                   indicating the proper response.
    */
   @GetMapping(value = "/enrollStudentInCourse", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<?> addMajorToDept(
+  public ResponseEntity<?> enrollStudentInCourse(
       @RequestParam String deptCode,       
       @RequestParam int courseCode
   ) {
@@ -428,10 +439,13 @@ public class RouteController {
         } else {
           result.append("The following course is full: ").append("\n");
           result.append(requestedCourse.toString()).append("\n\n");
-          result.append("The following courses are available as alternatives in this department: ").append("\n");
+          result.append("The following courses are available as alternatives in this department: ")
+              .append("\n");
           for (Map.Entry<String, Course> entry : courseMapping.entrySet()) {
             if (!entry.getValue().isCourseFull()) {
-              result.append(entry.getValue().toString()).append(" ").append(entry.getValue().getEnrollmentCount()).append(" ").append(entry.getValue().getEnrollmentCapacity());
+              result.append(entry.getValue().toString()).append(" ").append(entry.getValue()
+                  .getEnrollmentCount()).append(" ")
+                      .append(entry.getValue().getEnrollmentCapacity());
             } 
           }
         }
@@ -544,8 +558,8 @@ public class RouteController {
         if (isStudentDropped) {
           return new ResponseEntity<>("Student has been dropped.", HttpStatus.OK);
         } else {
-          return new ResponseEntity<>("There was an internal error", 
-              HttpStatus.INTERNAL_SERVER_ERROR);
+          return new ResponseEntity<>("There are no students to drop", 
+              HttpStatus.BAD_REQUEST);
         }
       } else {
         return new ResponseEntity<>("Course Not Found", HttpStatus.NOT_FOUND);
@@ -594,6 +608,11 @@ public class RouteController {
         if (requestedCourse == null) {
           return new ResponseEntity<>("Course Not Found", HttpStatus.NOT_FOUND);
         }
+
+        if (requestedCourse.getEnrollmentCapacity() < count){
+          return new ResponseEntity<>("Attempting to exceed course capacity, could not complete request", HttpStatus.BAD_REQUEST);
+        }
+
         int oldEnrollment = requestedCourse.getEnrollmentCount();
         requestedCourse.setEnrolledStudentCount(count);
         if (oldEnrollment == (requestedCourse.getEnrollmentCount()) & oldEnrollment != count) {

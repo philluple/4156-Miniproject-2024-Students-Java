@@ -179,19 +179,15 @@ public class IndividualProjectApplication implements CommandLineRunner {
     Course chem2444 = new Course("Christopher Eckdahl", locations[1], times[0], 150);
     chem2444.setEnrolledStudentCount(150);
     Course chem2494 = new Course("Talha Siddiqui", "202 HAV", "1:10-5:00", 24);
-    chem2494.setEnrolledStudentCount(18);
+    chem2494.setEnrolledStudentCount(23);
     Course chem3080 = new Course("Milan Delor", "209 HAV", times[2], 60);
     chem3080.setEnrolledStudentCount(18);
     Course chem4071 = new Course("Jonathan S Owen", "320 HAV", "8:40-9:55", 42);
     chem4071.setEnrolledStudentCount(29);
     Course chem4102 = new Course("Dalibor Sames", "320 HAV", times[2], 28);
     chem4102.setEnrolledStudentCount(27);
-    //testing for retrieve courses
-    Course chem1004 = new Course("Dalibor Sames", "320 HAV", times[2], 28);
-    chem1004.setEnrolledStudentCount(27);
 
     courses = new HashMap<>();
-    courses.put("1004", chem1004);
     courses.put("1403", chem1403);
     courses.put("1500", chem1500);
     courses.put("2045", chem2045);

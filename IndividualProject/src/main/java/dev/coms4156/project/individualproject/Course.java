@@ -49,7 +49,6 @@ public class Course implements Serializable {
       this.enrolledStudentCount--;
       return true;
     }
-
     return false;
   }
 
@@ -91,9 +90,12 @@ public class Course implements Serializable {
 
 
   public void setEnrolledStudentCount(int count) {
-    this.enrolledStudentCount = count;
+    if (count > this.enrollmentCapacity){
+      this.enrolledStudentCount = this.enrollmentCapacity;
+    } else {
+      this.enrolledStudentCount = count;
+    }
   }
-
 
   public boolean isCourseFull() {
     return this.enrolledStudentCount >= this.enrollmentCapacity;
