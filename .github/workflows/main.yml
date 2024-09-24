@@ -31,7 +31,20 @@ jobs:
       run: |
         cd IndividualProject
         mvn clean install  # Ensure to install dependencies
-        mvn spring-boot:run -Dspring-boot.run.arguments="setup"
-      
-      
+        (mvn spring-boot:run -Dspring-boot.run.arguments="setup" | tee output.log) &
 
+          # Store the PID of the last background process
+          CMD_PID=$!
+
+          # Monitor the output for "System Setup"
+          while true; do
+            if grep -q "System Setup" output.log; then
+              echo "Detected 'System Setup'. Sending Ctrl+C..."
+              kill -SIGINT $CMD_PID  # Send Ctrl+C to the command
+              break
+            fi
+            sleep 1  # Wait for a second before checking again
+          done
+
+          # Wait for the command to finish (optional)
+          wait $CMD_PID
