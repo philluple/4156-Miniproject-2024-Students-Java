@@ -18,16 +18,11 @@ jobs:
         cd IndividualProject
         mvn checkstyle:check
 
-    - name: Set up JDK
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17'  # Change to the required version of Java
-        distribution: 'temurin'
-
     - name: Install PMD
       run: |
-        sudo apt-get update
-        sudo apt-get install -y pmd
+        curl -OL https://github.com/pmd/pmd/releases/download/pmd_releases%2F7.5.0/pmd-dist-7.5.0-bin.zip
+        unzip pmd-dist-7.5.0-bin.zip
+        alias pmd="$HOME/pmd-bin-7.5.0/bin/pmd"
 
     - name: pmd check
       run: pmd check -f text -R rulesets/java/quickstart.xml -d .
