@@ -13,10 +13,21 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
       
-    - name: mvn check 
+    - name: MVN check 
       run: |
         cd IndividualProject
         mvn checkstyle:check
+
+    - name: Set up JDK
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'  # Change to the required version of Java
+        distribution: 'temurin'
+
+    - name: Install PMD
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y pmd
 
     - name: pmd check
       run: pmd check -f text -R rulesets/java/quickstart.xml -d .
