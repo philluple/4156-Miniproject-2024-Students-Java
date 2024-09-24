@@ -18,12 +18,7 @@ jobs:
         cd IndividualProject
         mvn checkstyle:check
 
-    - name: Install PMD
-      run: |
-        curl -OL https://github.com/pmd/pmd/releases/download/pmd_releases%2F7.5.0/pmd-dist-7.5.0-bin.zip
-        unzip pmd-dist-7.5.0-bin.zip
-
     - name: PMD check
       run: |
-        ./pmd-bin-7.5.0/bin/pmd check -f text -R rulesets/java/quickstart.xml -d .
+        mvn pmd:check
 
