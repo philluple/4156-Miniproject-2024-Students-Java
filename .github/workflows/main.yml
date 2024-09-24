@@ -20,5 +20,6 @@ jobs:
 
     - name: PMD check
       run: |
+        cd IndividualProject
         mvn pmd:check
 
