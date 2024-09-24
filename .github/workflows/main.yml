@@ -22,7 +22,8 @@ jobs:
       run: |
         curl -OL https://github.com/pmd/pmd/releases/download/pmd_releases%2F7.5.0/pmd-dist-7.5.0-bin.zip
         unzip pmd-dist-7.5.0-bin.zip
-        alias pmd="$HOME/pmd-bin-7.5.0/bin/pmd"
 
-    - name: pmd check
-      run: pmd check -f text -R rulesets/java/quickstart.xml -d .
+    - name: PMD check
+      run: |
+        ./pmd-bin-7.5.0/bin/pmd check -f text -R rulesets/java/quickstart.xml -d .
+
