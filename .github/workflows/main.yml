@@ -28,7 +28,6 @@ jobs:
     steps:
     - name: Run build
       run: |
-        cd IndividualProject
         mvn spring-boot:run -Dspring-boot.run.arguments="setup"
       
       
