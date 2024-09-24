@@ -12,3 +12,8 @@ jobs:
     steps: 
     - name: Checkout code
       uses: actions/checkout@v2
+      
+    - name: Style check 
+      run: |
+        cd IndividualProject
+        mvn checkstyle:check
