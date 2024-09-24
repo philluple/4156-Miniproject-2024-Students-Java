@@ -12,7 +12,6 @@ jobs:
     steps: 
     - name: Checkout code
       uses: actions/checkout@v2
-      
     - name: MVN check 
       run: |
         cd IndividualProject
@@ -28,6 +27,7 @@ jobs:
     steps:
     - name: Run build
       run: |
+        mvn clean install  # Ensure to install dependencies
         mvn spring-boot:run -Dspring-boot.run.arguments="setup"
       
       
