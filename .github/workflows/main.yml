@@ -27,6 +27,7 @@ jobs:
     steps:
     - name: Run build
       run: |
+        cd IndividualProject
         mvn clean install  # Ensure to install dependencies
         mvn spring-boot:run -Dspring-boot.run.arguments="setup"
       
