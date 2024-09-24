@@ -7,13 +7,16 @@ on:
     branches: [main]
 
 jobs: 
-  build: 
+  style-check: 
     runs-on: macos-latest
     steps: 
     - name: Checkout code
       uses: actions/checkout@v2
       
-    - name: Style check 
+    - name: mvn check 
       run: |
         cd IndividualProject
         mvn checkstyle:check
+
+    - name: pmd check
+      run: pmd check -f text -R rulesets/java/quickstart.xml -d .
