@@ -19,7 +19,6 @@ import org.springframework.http.ResponseEntity;
 public class RouteControllerUnitTests {
 
   private RouteController routeController;
-  private MyFileDatabase mockDatabase;
   private static Map<String, Department> mapping;
   
   /**
@@ -69,7 +68,7 @@ public class RouteControllerUnitTests {
     mapping.put("COMS", compSci);
     mapping.put("ECON", econ);
 
-    mockDatabase = mock(MyFileDatabase.class);
+    MyFileDatabase mockDatabase = mock(MyFileDatabase.class);
     doAnswer(invocation -> {
       return null;
     }).when(mockDatabase).setMapping(mapping);

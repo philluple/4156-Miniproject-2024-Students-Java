@@ -617,7 +617,7 @@ public class RouteController {
 
         int oldEnrollment = requestedCourse.getEnrollmentCount();
         requestedCourse.setEnrolledStudentCount(count);
-        if (oldEnrollment == (requestedCourse.getEnrollmentCount()) & oldEnrollment != count) {
+        if (oldEnrollment == requestedCourse.getEnrollmentCount() & oldEnrollment != count) {
           return new ResponseEntity<>("Could not update enrollment count, try again later.", 
               HttpStatus.OK);
         }
