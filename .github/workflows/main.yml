@@ -40,7 +40,7 @@ jobs:
           while true; do
             if grep -q "System Setup" output.log; then
               echo "Detected 'System Setup'. Sending Ctrl+C..."
-              kill -SIGINT $CMD_PID
+              kill -SIGTERM -$CMD_PID  # Note the negative sign
               break
             fi
             sleep 1  # Wait for a second before checking again
