@@ -2,9 +2,9 @@ name: Build CI
 
 on: 
   push:
-    branches: [main]
+    branches: [test, main]
   pull_request: 
-    branches: [main]
+    branches: [test, main]
 
 jobs: 
   style-check: 
@@ -31,20 +31,22 @@ jobs:
       run: |
         cd IndividualProject
         mvn clean install  # Ensure to install dependencies
-        (mvn spring-boot:run -Dspring-boot.run.arguments="setup" | tee output.log) &
 
-          # Store the PID of the last background process
-          CMD_PID=$!
+        # Run Spring Boot in the background using 'setsid' to start in a new process group
+        (setsid mvn spring-boot:run -Dspring-boot.run.arguments="setup" | tee output.log) &
 
-          # Monitor the output for "System Setup"
-          while true; do
-            if grep -q "System Setup" output.log; then
-              echo "Detected 'System Setup'. Sending Ctrl+C..."
-              kill -SIGTERM -$CMD_PID  # Note the negative sign
-              break
-            fi
-            sleep 1  # Wait for a second before checking again
-          done
+        # Store the PID of the last background process
+        CMD_PID=$!
 
-          # Wait for the command to finish (optional)
-          wait $CMD_PID
+        # Monitor the output for "System Setup"
+        while true; do
+          if grep -q "System Setup" output.log; then
+            echo "Detected 'System Setup'. Sending Ctrl+C..."
+            kill -2 $CMD_PID  # Send SIGINT to gracefully stop the process
+            break
+          fi
+          sleep 1  # Wait for a second before checking again
+        done
+
+        # Wait for the command to finish
+        wait $CMD_PID
