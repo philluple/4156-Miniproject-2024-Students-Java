@@ -24,6 +24,8 @@ In either case, if successful, the application will be a local instance running 
 ## Cloud based instance
 As of September 27, 2024, there is a cloud instance running for this project which is reachable through: [this link](https://advanced-swe-436602.uc.r.appspot.com/)
 
+### Link to the video which shows deployment
+[https://youtu.be/BJ_REEhq2aI](https://youtu.be/BJ_REEhq2aI)
 
 Endpoints
 This section describes the endpoints that this application service provides. 
