@@ -32,17 +32,20 @@ jobs:
         cd IndividualProject
         mvn clean install  # Ensure to install dependencies
 
-        # Run Spring Boot in the background using 'setsid' to start in a new process group
-        (nohup mvn spring-boot:run -Dspring-boot.run.arguments="setup" > output.log 2>&1 &)
+        # Start Spring Boot in the background
+        nohup mvn spring-boot:run -Dspring-boot.run.arguments="setup" > output.log 2>&1 &
 
-        # Store the PID of the last background process
-        CMD_PID=$!
+        # Wait for the process to start
+        sleep 5
+
+        # Find the Spring Boot process ID
+        CMD_PID=$(ps aux | grep 'spring-boot:run' | grep -v grep | awk '{print $2}')
 
         # Monitor the output for "System Setup"
         while true; do
           if grep -q "System Setup" output.log; then
             echo "Detected 'System Setup'. Sending SIGINT..."
-            kill -2 $CMD_PID  # Send SIGINT to gracefully stop the process
+            kill -2 $CMD_PID  # Send SIGINT to the Spring Boot process
             break
           fi
           sleep 1  # Wait for a second before checking again
@@ -50,4 +53,3 @@ jobs:
 
         # Wait for the command to finish
         wait $CMD_PID
-
