@@ -27,8 +27,10 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-    - name: Run build
+    - name: Run unit test
       run: |
         cd IndividualProject
         mvn test
-        
+    - name: Check test result
+      if: failure()
+      run: echo "Unit tests failed!" && exit 1
